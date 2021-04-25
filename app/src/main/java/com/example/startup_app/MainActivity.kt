@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         val currentUser = auth.currentUser
         if(currentUser == null){
-           startActivity(Intent(this , signIn::class.java))
+           startActivity(Intent(this , logIn::class.java))
         }
     }
 
