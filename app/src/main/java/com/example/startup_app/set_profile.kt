@@ -10,11 +10,11 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContentResolverCompat.query
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.ktx.Firebase
 
  data class Image(val uri: Uri ,
     val  name:String ,
@@ -25,59 +25,67 @@ import androidx.core.content.ContentResolverCompat.query
 
 
  class set_profile : AppCompatActivity() {
-
+    val SELECT_PICTURE =100
+    private val user  = Firebase.auth.currentUser
     private lateinit var profile_img : ImageView
     private lateinit var change_img : Button
-    private var PICK_IMAGE:Int = 100
+    private lateinit var save_changes : Button
     private lateinit var imageUri:Uri
+    private lateinit var getName:EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_set_profile)
 
-
-        val projection = arrayOf(MediaStore.Images.Media.ORIGINAL_DOCUMENT_ID,MediaStore.Images.Media.DISPLAY_NAME , MediaStore.Images.Media.SIZE,)
-        val selection = "${MediaStore.Images.Media.SIZE}<=?"
-        val selectionArgs = arrayOf("2")
-        val sortOrder = "${MediaStore.Images.Media.DISPLAY_NAME} ASC"
-
-        applicationContext.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                , projection
-                , selection
-                ,selectionArgs
-                , sortOrder)?.use { cursor->
-
-                    val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.ORIGINAL_DOCUMENT_ID)
-                    val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-                    val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
-
-                    while (cursor.moveToNext()){
-
-                        val id = cursor.getLong(idColumn)
-                        val name = cursor.getString(nameColumn)
-                        val size  = cursor.getInt(sizeColumn)
-
-                        val contentUri:Uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,id)
-                        imageList += Image(contentUri , name , size)
-
-
-
-                    }
-
-        }
-
-
+        getName = findViewById(R.id.edit_name)
 
         profile_img = findViewById(R.id.select_img)
         change_img = findViewById(R.id.select_photo)
+        save_changes = findViewById(R.id.save)
 
         change_img.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
                 Toast.makeText(this@set_profile , "open gallery" , Toast.LENGTH_SHORT).show()
+                imageCloser()
             }
+        })
+
+        save_changes.setOnClickListener(object : View.OnClickListener {
+
+            override fun onClick(v: View?) {
+                val profileUpdates = userProfileChangeRequest {
+                    displayName = getName.text.toString()
+                    photoUri = imageUri
+                }
+
+                user!!.updateProfile(profileUpdates).addOnCompleteListener{
+                    if(it.isSuccessful){
+                        Toast.makeText(this@set_profile ,"Save changes" , Toast.LENGTH_SHORT).show()
+
+                    }
+                }
+            }
+
         })
     }
 
+    fun imageCloser(){
+        intent = Intent()
+        intent.setType("image/*")
+        intent.setAction(Intent.ACTION_GET_CONTENT)
+        startActivityForResult(Intent.createChooser(intent,"Select Pictire") ,SELECT_PICTURE)
+    }
 
+     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+         super.onActivityResult(requestCode, resultCode, data)
+         if(resultCode == RESULT_OK){
+             if (requestCode == SELECT_PICTURE){
+                 imageUri= data?.data!!
+                 if (null!= imageUri){
+                     profile_img.setImageURI(imageUri)
+                 }
+             }
+         }
+     }
 
     companion object{
         private const val TAG = "set profile"
