@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
@@ -40,7 +41,7 @@ class profile : Fragment() {
             for (profile in it.providerData){
                 val name = profile.displayName
                 val photoUrl = profile.photoUrl
-
+//                Toast.makeText(requireContext() , photoUrl.toString() , Toast.LENGTH_SHORT).show()
 
 
                 print(name+"name")

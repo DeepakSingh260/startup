@@ -27,7 +27,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         auth = Firebase.auth
-
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.frame , home()).commit()
+        }
         bottom_nav_bar = findViewById(R.id.bottom_nav_bar)
         bottom_nav_bar.setOnNavigationItemSelectedListener {
                 when(it.itemId){
