@@ -13,6 +13,13 @@ import android.widget.Button
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import android.widget.Toast
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -24,11 +31,16 @@ import java.util.*
 
 class camera : Fragment() {
     private lateinit var click: Button
+    private lateinit var upload:Button
+    private lateinit var download : Button
     private  var mcamera:Camera? = null
     private var mpreview:CameraPreview? = null
     private val MEDIA_TYPE_IMAGE:Int = 1
     private val MEDIA_TYPE_VIDEO:Int =   2
+    private  lateinit var  pictureFile :File
+    private  var Data:ByteArray? = null
     private lateinit var ctx: Context
+    private val user = Firebase.auth.currentUser
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,20 +53,17 @@ class camera : Fragment() {
 
 
     private val mPicture = Camera.PictureCallback { data, _ ->
-        val pictureFile: File = getOutputMediaFile(MEDIA_TYPE_IMAGE) ?: run {
+            pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE) ?: run {
             Log.d(TAG, ("Error creating media file, check storage permissions"))
+
             return@PictureCallback
         }
+        Data = data
+        click.visibility = View.INVISIBLE
+        upload.visibility = View.VISIBLE
+        download.visibility = View.VISIBLE
 
-        try {
-            val fos = FileOutputStream(pictureFile)
-            fos.write(data)
-            fos.close()
-        } catch (e: FileNotFoundException) {
-            Log.d(TAG, "File not found: ${e.message}")
-        } catch (e: IOException) {
-            Log.d(TAG, "Error accessing file: ${e.message}")
-        }
+
     }
 
     private fun getOutputMediaFileUri(type: Int): Uri {
@@ -79,9 +88,10 @@ class camera : Fragment() {
         mediaStorageDir.apply {
             if (!exists()) {
                 if (!mkdirs()) {
-                    Log.d("MyCameraApp", "failed to create directory")
                     mediaStorageDir.mkdir()
-                    return null
+                    Log.d("MyCameraApp", "failed to create directory")
+
+
                 }
             }
         }
@@ -103,7 +113,12 @@ class camera : Fragment() {
     override fun onStart() {
         super.onStart()
         click = requireView().findViewById(R.id.click)
+        upload = requireView().findViewById(R.id.upload)
+        download = requireView().findViewById(R.id.download)
+        upload.visibility = View.INVISIBLE
+        download.visibility = View.INVISIBLE
         ctx = requireContext()
+
         if (checkCameraHardware(ctx)){
             mcamera = getCameraInstance()
             mpreview = mcamera?.let {
@@ -119,6 +134,42 @@ class camera : Fragment() {
 
             click.setOnClickListener{
                 mcamera?.takePicture(null , null  , mPicture)
+            }
+
+            download.setOnClickListener {
+                try {
+                    val fos = FileOutputStream(pictureFile)
+                    fos.write(Data)
+                    Toast.makeText(requireContext() , "photo saved " , Toast.LENGTH_SHORT).show()
+
+                    fos.close()
+                } catch (e: FileNotFoundException) {
+                    Log.d(TAG, "File not found: ${e.message}")
+                } catch (e: IOException) {
+                    Log.d(TAG, "Error accessing file: ${e.message}")
+                }
+
+            }
+
+            upload.setOnClickListener {
+
+                val ref = FirebaseStorage.getInstance().reference?.child("storage/" +user.displayName)
+                val uploadTask = ref.putFile(Uri.fromFile(pictureFile)!!)
+
+                val urlTask = uploadTask.continueWithTask(Continuation < UploadTask.TaskSnapshot , Task<Uri>>{
+                    if(!it.isSuccessful){
+                        it.exception?.let {
+                            throw it
+                        }
+                    }
+
+                    return@Continuation ref.downloadUrl
+                })?.addOnCompleteListener {
+                    if (it.isSuccessful){
+                        var downloadUrl:Uri = it.result!!
+                        Toast.makeText(requireContext() , "uploaded" , Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
 
 

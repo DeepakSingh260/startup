@@ -10,4 +10,6 @@
     <string name="auth_failed">Authentication failed</string>
     <string name="minimum_password">min length of password 6</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="upload">Upload</string>
+    <string name="download">Download</string>
 </resources>

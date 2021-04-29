@@ -9,10 +9,7 @@ import android.view.LayoutInflater
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
@@ -24,6 +21,7 @@ class profile : Fragment() {
     private lateinit var profile_name : TextView
     private lateinit var profile_image:ImageView
     private lateinit var edit_profile : Button
+    private lateinit var profile_Grid : GridView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +34,8 @@ class profile : Fragment() {
         profile_name = requireView().findViewById(R.id.profile_name)
         profile_image = requireView().findViewById(R.id.profile_image)
         edit_profile = requireView().findViewById(R.id.edit_profile)
+        profile_Grid = requireView().findViewById(R.id.profile_grid)
+        profile_Grid.adapter = image_adapter(requireContext())
         val user = Firebase.auth.currentUser
         user?.let {
             for (profile in it.providerData){
