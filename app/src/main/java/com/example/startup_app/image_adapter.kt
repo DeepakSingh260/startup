@@ -9,7 +9,7 @@ class image_adapter (c:Context): BaseAdapter() {
     private lateinit var mContext: Context
 
     override fun getCount(): Int {
-
+        return 0
     }
 
 
@@ -34,6 +34,7 @@ class image_adapter (c:Context): BaseAdapter() {
         }
         else{
 //            imageView = (ImageView)convertView
+            return convertView
         }
 //        imageView.setImageResource()
 
