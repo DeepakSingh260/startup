@@ -17,6 +17,9 @@ import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
@@ -41,6 +44,11 @@ class camera : Fragment() {
     private  var Data:ByteArray? = null
     private lateinit var ctx: Context
     private val user = Firebase.auth.currentUser
+    private  var downloadUrl:Uri? = null
+
+    private  val _db = FirebaseDatabase.getInstance().getReference("images/")
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -153,23 +161,40 @@ class camera : Fragment() {
 
             upload.setOnClickListener {
 
-                val ref = FirebaseStorage.getInstance().reference?.child("storage/" +user.displayName)
+                val ref = FirebaseStorage.getInstance().reference?.child("storage/" +user.uid+"/Img_"+SimpleDateFormat("yyyyMMdd_HHmmss").format(Date()))
+                try {
+                    val fos = FileOutputStream(pictureFile)
+                    fos.write(Data)
+                    Toast.makeText(requireContext() , "photo saved " , Toast.LENGTH_SHORT).show()
+
+                    fos.close()
+                } catch (e: FileNotFoundException) {
+                    Log.d(TAG, "File not found: ${e.message}")
+                } catch (e: IOException) {
+                    Log.d(TAG, "Error accessing file: ${e.message}")
+                }
                 val uploadTask = ref.putFile(Uri.fromFile(pictureFile)!!)
 
-                val urlTask = uploadTask.continueWithTask(Continuation < UploadTask.TaskSnapshot , Task<Uri>>{
-                    if(!it.isSuccessful){
+                val urlTask = uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> {
+                    if (!it.isSuccessful) {
                         it.exception?.let {
                             throw it
                         }
                     }
 
+                    Toast.makeText(requireContext(), "uploaded", Toast.LENGTH_SHORT).show()
+
                     return@Continuation ref.downloadUrl
                 })?.addOnCompleteListener {
                     if (it.isSuccessful){
-                        var downloadUrl:Uri = it.result!!
+                         downloadUrl = it.result!!
                         Toast.makeText(requireContext() , "uploaded" , Toast.LENGTH_SHORT).show()
+                        _db.child(user.uid+"/").push().setValue(downloadUrl.toString())
                     }
                 }
+
+
+
             }
 
 
@@ -268,4 +293,13 @@ class  CameraPreview(context: Context , private val mcamera:Camera):SurfaceView(
         private const val TAG = "PreviewCamera"
     }
 
+}
+
+class imageUrl{
+    companion object Factory{
+        fun create(): imageUrl = imageUrl()
+    }
+    var objectId:String? = null
+    var taskDesc:String? = null
+    var done:Boolean? = false
 }

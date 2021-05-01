@@ -92,7 +92,7 @@ import com.google.firebase.storage.ktx.storageMetadata
                  imageUri= data?.data!!
                  if (null!= imageUri){
                      profile_img.setImageURI(imageUri)
-                     val ref = FirebaseStorage.getInstance().reference?.child("profile_pic/" +user.displayName)
+                     val ref = FirebaseStorage.getInstance().reference?.child("profile_pic/" +user.uid )
                      val uploadTask = ref?.putFile(imageUri!!)
 
                      val urlTask = uploadTask?.continueWithTask(Continuation<UploadTask.TaskSnapshot , Task<Uri>> {
