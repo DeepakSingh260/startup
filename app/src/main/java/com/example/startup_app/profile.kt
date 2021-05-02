@@ -24,6 +24,8 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class profile : Fragment() {
@@ -52,6 +54,7 @@ class profile : Fragment() {
         var imageList  = ArrayList<String>()
         _db.addValueEventListener(object :ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
+                imageList.removeAll(Collections.emptyList())
                 for (postSnapshot in snapshot.children.iterator()){
                     imageList.add(postSnapshot.value.toString())
 
