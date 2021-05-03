@@ -34,9 +34,10 @@ class profile : Fragment() {
     private lateinit var profile_image:ImageView
     private lateinit var edit_profile : Button
     private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: imageAdapter
     val user = Firebase.auth.currentUser
     private val _db = FirebaseDatabase.getInstance().getReference("images/"+user.uid +"/")
-
+    var imageList  = ArrayList<String?>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +52,13 @@ class profile : Fragment() {
         edit_profile = requireView().findViewById(R.id.edit_profile)
         recyclerView = requireView().findViewById(R.id.recyclerView)
 
-        var imageList  = ArrayList<String>()
+
+        val adapter = imageAdapter(imageList,  requireContext())
+
+
+
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         _db.addValueEventListener(object :ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 imageList.removeAll(Collections.emptyList())
@@ -59,12 +66,10 @@ class profile : Fragment() {
                     imageList.add(postSnapshot.value.toString())
 
                 }
-                val adapter = imageAdapter(imageList ,  activity as Context )
+                adapter.notifyDataSetChanged()
 
 
 
-                recyclerView.adapter = adapter
-                recyclerView.layoutManager = LinearLayoutManager(requireContext())
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -120,9 +125,13 @@ class profile : Fragment() {
         private const val TAG = "profile"
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
+
 }
 
-private class imageAdapter(imageList: ArrayList<String>, requireContext: Context) : RecyclerView.Adapter<imageAdapter.imageViewHolder>()  {
+private class imageAdapter(imageList: ArrayList<String?>, requireContext: Context) : RecyclerView.Adapter<imageAdapter.imageViewHolder>()  {
     var ctx = requireContext
     var img_list = imageList
 
@@ -145,7 +154,7 @@ private class imageAdapter(imageList: ArrayList<String>, requireContext: Context
 
             var index = holder.adapterPosition
             Log.d(TAG ,"list 1"+img_list[index] )
-            Picasso.with(ctx).load(img_list.get(position).toUri()).into(holder.image)
+            Picasso.with(ctx).load(img_list.get(position)!!.toUri()).into(holder.image)
 //            holder.image.setImageURI(img_list[position].toUri())
     }
 

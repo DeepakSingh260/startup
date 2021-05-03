@@ -98,7 +98,7 @@ class camera : Fragment() {
                 if (!mkdirs()) {
                     mediaStorageDir.mkdir()
                     Log.d("MyCameraApp", "failed to create directory")
-
+                    return null
 
                 }
             }

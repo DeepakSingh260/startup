@@ -62,4 +62,105 @@
         android:text="save_changes"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/display_name" />
+
+    <TextView
+        android:id="@+id/tags"
+        android:textSize="24sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="42dp"
+        android:layout_marginLeft="42dp"
+        android:layout_marginTop="32dp"
+        android:text="Tags"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/display_name" />
+
+    <CheckBox
+        android:id="@+id/programming"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/programming"
+        app:layout_constraintStart_toEndOf="@+id/tags"
+        app:layout_constraintTop_toBottomOf="@+id/edit_name" />
+
+    <CheckBox
+        android:id="@+id/medical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/Medical"
+        app:layout_constraintStart_toEndOf="@+id/programming"
+        app:layout_constraintTop_toBottomOf="@+id/edit_name" />
+    <CheckBox
+        android:id="@+id/Netflix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginLeft="42dp"
+        android:layout_marginTop="14dp"
+        android:text="@string/Netflix"
+        app:layout_constraintStart_toEndOf="@+id/tags"
+        app:layout_constraintTop_toBottomOf="@+id/programming" />
+    <CheckBox
+        android:id="@+id/darkHumour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="14dp"
+        android:text="@string/darkHumour"
+        app:layout_constraintStart_toEndOf="@+id/Netflix"
+        app:layout_constraintTop_toBottomOf="@+id/medical" />
+
+    <CheckBox
+        android:id="@+id/reading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+
+        android:layout_marginTop="28dp"
+        android:text="@string/reading"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tags" />
+
+    <CheckBox
+        android:id="@+id/music"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginLeft="42dp"
+        android:layout_marginTop="14dp"
+        android:text="@string/Music"
+        app:layout_constraintStart_toEndOf="@+id/tags"
+        app:layout_constraintTop_toBottomOf="@+id/Netflix" />
+    <CheckBox
+        android:id="@+id/workout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="14dp"
+        android:text="@string/workout"
+        app:layout_constraintStart_toEndOf="@+id/Netflix"
+        app:layout_constraintTop_toBottomOf="@+id/darkHumour" />
+
+    <CheckBox
+        android:id="@+id/sarcasm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+
+        android:layout_marginTop="14dp"
+        android:text="@string/sarcasm"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reading" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
