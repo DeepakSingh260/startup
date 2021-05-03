@@ -93,11 +93,11 @@ import com.google.firebase.storage.UploadTask
                 val id = User(getName.text.toString() , downloadUrl ,tagList )
                 Log.d(TAG, "ID : "+id.toString())
 
-                _db.child(user.uid+"/name/").push().setValue(id.name)
-                _db.child(user.uid+"/profileUrl/").push().setValue(id.profileURI.toString())
+                _db.child(user.uid+"/name").setValue(id.name)
+                _db.child(user.uid+"/profileUrl").setValue(id.profileURI.toString())
 
                 for (i in id.tagList) {
-                    _db.child(user.uid + "/tagList/").push().setValue(i)
+                    _db.child(user.uid + "/tagList/"+i).setValue(i)
                     }
                 }
 
