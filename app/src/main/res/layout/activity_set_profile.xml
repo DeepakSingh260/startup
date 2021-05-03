@@ -10,9 +10,9 @@
         android:id="@+id/select_img"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="152dp"
+        android:layout_marginLeft="152dp"
+        android:layout_marginTop="76dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
@@ -21,35 +21,23 @@
         android:id="@+id/select_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="172dp"
+        android:layout_marginTop="128dp"
         android:text="Select photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/select_img" />
-
-    <TextView
-        android:id="@+id/display_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="52dp"
-        android:text="Name"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/select_photo" />
 
     <EditText
         android:id="@+id/edit_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="46dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginRight="100dp"
         android:ems="10"
         android:inputType="textPersonName"
-        app:layout_constraintStart_toEndOf="@+id/display_name"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_photo" />
 
     <Button
@@ -58,8 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="128dp"
         android:layout_marginLeft="128dp"
-        android:layout_marginTop="232dp"
         android:text="save_changes"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/display_name" />
+        tools:layout_editor_absoluteY="557dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
