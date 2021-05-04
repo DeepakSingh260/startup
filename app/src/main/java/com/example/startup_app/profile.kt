@@ -34,7 +34,7 @@ class profile : Fragment() {
     private lateinit var profile_image:ImageView
     private lateinit var edit_profile : Button
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: imageAdapter
+    private lateinit var adapterImage: imageAdapter
     val user = Firebase.auth.currentUser
     private val _db = FirebaseDatabase.getInstance().getReference("images/"+user.uid +"/")
     var imageList  = ArrayList<String?>()
@@ -53,11 +53,11 @@ class profile : Fragment() {
         recyclerView = requireView().findViewById(R.id.recyclerView)
 
 
-        val adapter = imageAdapter(imageList,  requireContext())
+        adapterImage = imageAdapter(imageList,  requireContext())
 
 
 
-        recyclerView.adapter = adapter
+        recyclerView.adapter = adapterImage
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         _db.addValueEventListener(object :ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -66,7 +66,7 @@ class profile : Fragment() {
                     imageList.add(postSnapshot.value.toString())
 
                 }
-                adapter.notifyDataSetChanged()
+                adapterImage.notifyDataSetChanged()
 
 
 

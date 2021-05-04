@@ -7,9 +7,10 @@
     <uses-feature
         android:name="android.hardware.camera2"
         android:required="false" />
-    <uses-permission android:name="android.permission.FORCE_ENABLE_SCOPED_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.FORCE_ENABLE_SCOPED_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -22,15 +23,19 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/Theme.Startup_app">
-        <activity android:name=".set_profile"></activity>
+        <activity android:name=".see_profile"></activity>
+        <activity android:name=".set_profile" />
         <activity android:name=".logIn" />
         <activity android:name=".signIn" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".splash_screen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".MainActivity">
+
         </activity>
     </application>
 

@@ -101,9 +101,9 @@ class profileAdapter(profileList: List<profile_info>, requireContext: Context) :
 
     override fun onBindViewHolder(holder: profileViewHolder, position: Int) {
         var index = holder.position
-        Picasso.with(ctx).load(profileList.get(position).photoUrl).into(holder.profilePic)
-        holder.nameText.text = profileList.get(position).name
-        Log.d(TAG ,profileList.get(position).photoUrl +": url" + profileList.get(position).name+" name")
+        Picasso.with(ctx).load(profileList.get(index).photoUrl).into(holder.profilePic)
+        holder.nameText.text = profileList.get(index).name
+        Log.d(TAG ,profileList.get(index).photoUrl +": url" + profileList.get(index).name+" name")
     }
 
     override fun getItemCount(): Int {
