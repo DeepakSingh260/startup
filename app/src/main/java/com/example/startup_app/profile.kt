@@ -32,12 +32,17 @@ class profile : Fragment() {
 
     private lateinit var profile_name : TextView
     private lateinit var profile_image:ImageView
+
+    private lateinit var edit_profile : ImageButton
+//    private lateinit var profile_Grid : GridView
+
     private lateinit var edit_profile : Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapterImage: imageAdapter
     val user = Firebase.auth.currentUser
     private val _db = FirebaseDatabase.getInstance().getReference("images/"+user.uid +"/")
     var imageList  = ArrayList<String?>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +52,11 @@ class profile : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
+//        profile_Grid = requireView().findViewById(R.id.profile_grid)
+//        profile_Grid.adapter = image_adapter(requireContext())
+        val user = Firebase.auth.currentUser
+
         profile_name = requireView().findViewById(R.id.profile_name)
         profile_image = requireView().findViewById(R.id.profile_image)
         edit_profile = requireView().findViewById(R.id.edit_profile)
@@ -90,6 +100,7 @@ class profile : Fragment() {
 
 
 
+>
         user?.let {
             for (profile in it.providerData){
                 val name = profile.displayName
