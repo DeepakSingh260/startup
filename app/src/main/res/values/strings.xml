@@ -12,4 +12,14 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="upload">Upload</string>
     <string name="download">Download</string>
+    <string name="programming">Programming</string>
+    <string name="Medical">Medical</string>
+    <string name="Netflix">Netflix</string>
+    <string name="darkHumour">Dark Humour</string>
+    <string name="reading">Reading</string>
+    <string name="sarcasm">Sarcasm</string>
+    <string name="workout">Workout</string>
+    <string name="Music">Music</string>
+    <string name="friend">Friends</string>
+    <string name="name">Name</string>
 </resources>

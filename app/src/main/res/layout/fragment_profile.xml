@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".profile">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/layout">
+        android:layout_height="match_parent">
+
 
 
         <ImageView
@@ -28,7 +30,7 @@
             app:civ_border_width="3dp"
             app:civ_border_color="#FFFFFFFF"
 
-            android:id="@+id/profile"
+            android:id="@+id/profile_image"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_below="@+id/header_cover_image"
@@ -39,28 +41,19 @@
             android:scaleType="centerCrop"
             android:src="@drawable/profile" />
 
-        <RelativeLayout
-            android:id="@+id/profile_layout"
-            android:layout_width="match_parent"
+      
+
+            <Button
+            android:id="@+id/edit_profile"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/header_cover_image"
-            android:background="#6B00A6"
-            android:elevation="4dp"
-            android:paddingBottom="24dp">
-
-
-            <ImageButton
-                android:id="@+id/edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/fui_transparent"
-                android:clickable="true"
-
-                android:src="@android:drawable/ic_menu_edit" />
+            android:layout_marginTop="4dp"
+            android:text="@string/edit_profile"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_image"
+            app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/name"
@@ -75,72 +68,32 @@
 
 
 
-        </RelativeLayout>
-
-    </RelativeLayout>
-
-</ScrollView>
+       
 
 
 
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    tools:context=".profile">-->
+        <ScrollView
+            android:layout_width="400dp"
+            android:layout_height="460dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_profile">
 
-<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--        android:id="@+id/coordinatorLayout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.666"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/profile_name"-->
-<!--            android:layout_width="96dp"-->
-<!--            android:layout_height="27dp"-->
-<!--            android:layout_marginStart="116dp"-->
-<!--            android:layout_marginLeft="116dp"-->
-<!--            android:layout_marginTop="24dp"-->
-<!--            android:hint="Name"-->
-<!--            android:textSize="18sp"-->
-<!--            android:textStyle="bold"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
 
-<!--        <ImageView-->
-<!--            android:id="@+id/profile_image"-->
-<!--            android:layout_width="80dp"-->
-<!--            android:layout_height="80dp"-->
-<!--            android:layout_marginStart="24dp"-->
-<!--            android:layout_marginLeft="24dp"-->
-<!--            android:layout_marginTop="24dp"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            tools:src="@tools:sample/avatars" />-->
-
-<!--        <Button-->
-<!--            android:id="@+id/edit_profile"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="40dp"-->
-<!--            android:text="@string/edit_profile"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintHorizontal_bias="0.364"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/profile_image" />-->
-
-<!--        <GridView-->
-<!--            android:id="@+id/profile_grid"-->
-<!--            android:layout_width="407dp"-->
-<!--            android:layout_height="505dp"-->
-<!--            android:layout_marginTop="32dp"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/edit_profile" />-->
-
-
-
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
-<!--</FrameLayout>-->

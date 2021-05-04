@@ -11,6 +11,12 @@
     android:title="@string/camera"
     />
 <item
+    android:id="@+id/friends"
+    android:icon="@drawable/friends"
+    android:title="@string/friend"
+    />
+
+<item
     android:id="@+id/profile"
     android:icon="@drawable/profile"
     android:title="@string/profile"

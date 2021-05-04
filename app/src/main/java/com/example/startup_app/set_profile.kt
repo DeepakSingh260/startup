@@ -1,28 +1,20 @@
  package com.example.startup_app
 
-import android.content.ContentResolver
-import android.content.ContentUris
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.*
-import androidx.core.content.ContentResolverCompat.query
-import com.google.android.gms.auth.api.signin.internal.Storage
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
-import com.google.firebase.storage.ktx.storageMetadata
 
  data class Image(val uri: Uri ,
     val  name:String ,
@@ -41,6 +33,19 @@ import com.google.firebase.storage.ktx.storageMetadata
     private lateinit var save_changes : Button
     private lateinit var imageUri:Uri
     private lateinit var getName:EditText
+    private lateinit var mPrgramming:CheckBox
+     private lateinit var mMedical:CheckBox
+     private lateinit var mReading:CheckBox
+     private lateinit var mNetflix:CheckBox
+     private lateinit var mDarkHumour:CheckBox
+     private lateinit var mSarcastic:CheckBox
+     private lateinit var mMusic:CheckBox
+     private lateinit var mWorkout:CheckBox
+     private  val _db = FirebaseDatabase.getInstance().getReference("profiles/")
+
+     private lateinit var tagList: List<String>
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_set_profile)
@@ -50,6 +55,15 @@ import com.google.firebase.storage.ktx.storageMetadata
         profile_img = findViewById(R.id.select_img)
         change_img = findViewById(R.id.select_photo)
         save_changes = findViewById(R.id.save)
+
+        mPrgramming = findViewById(R.id.programming)
+        mMedical = findViewById(R.id.medical)
+        mReading = findViewById(R.id.reading)
+        mNetflix = findViewById(R.id.Netflix)
+        mDarkHumour = findViewById(R.id.darkHumour)
+        mSarcastic = findViewById(R.id.sarcasm)
+        mMusic = findViewById(R.id.music)
+        mWorkout = findViewById(R.id.workout)
 
         change_img.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
@@ -73,7 +87,19 @@ import com.google.firebase.storage.ktx.storageMetadata
 
                     }
                 }
-            }
+
+                tagList = checkBox()
+
+                val id = User(getName.text.toString() , downloadUrl ,tagList )
+                Log.d(TAG, "ID : "+id.toString())
+
+                _db.child(user.uid+"/name").setValue(id.name)
+                _db.child(user.uid+"/profileUrl").setValue(id.profileURI.toString())
+
+                for (i in id.tagList) {
+                    _db.child(user.uid + "/tagList/"+i).setValue(i)
+                    }
+                }
 
         })
     }
@@ -92,7 +118,7 @@ import com.google.firebase.storage.ktx.storageMetadata
                  imageUri= data?.data!!
                  if (null!= imageUri){
                      profile_img.setImageURI(imageUri)
-                     val ref = FirebaseStorage.getInstance().reference?.child("profile_pic/" +user.displayName)
+                     val ref = FirebaseStorage.getInstance().reference?.child("profile_pic/" +user.uid )
                      val uploadTask = ref?.putFile(imageUri!!)
 
                      val urlTask = uploadTask?.continueWithTask(Continuation<UploadTask.TaskSnapshot , Task<Uri>> {
@@ -113,7 +139,44 @@ import com.google.firebase.storage.ktx.storageMetadata
          }
      }
 
+     fun checkBox():List<String>{
+         val list:MutableList<String> = ArrayList()
+         if(mPrgramming.isChecked){
+             list.add(mPrgramming.text.toString())
+         }
+         if(mMedical.isChecked){
+             list.add(mMedical.text.toString())
+         }
+         if(mMusic.isChecked){
+             list.add(mMusic.text.toString())
+         }
+         if(mDarkHumour.isChecked){
+             list.add(mDarkHumour.text.toString())
+         }
+         if(mReading.isChecked){
+             list.add(mReading.text.toString())
+         }
+         if(mSarcastic.isChecked){
+             list.add(mSarcastic.text.toString())
+         }
+         if(mWorkout.isChecked){
+             list.add(mWorkout.text.toString())
+         }
+         if(mNetflix.isChecked){
+             list.add(mNetflix.text.toString())
+         }
+
+         return list
+     }
+
     companion object{
         private const val TAG = "set profile"
     }
 }
+
+ data class User(
+         val name:String,
+         val profileURI: Uri?,
+         val tagList:List<String>
+     )
+
