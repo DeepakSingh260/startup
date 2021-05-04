@@ -1,7 +1,9 @@
 package com.example.startup_app
 
+import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+//import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DataSnapshot
@@ -56,10 +59,11 @@ class Friend : Fragment() {
                 for (postSnapshot in snapshot.children){
                     profileList.removeAll(Collections.emptyList())
                     Log.d(TAG , postSnapshot.toString())
+                    val userID = postSnapshot.key.toString()
                     val photoUrl = postSnapshot.child("profileUrl/").value
                     val name = postSnapshot.child("name/").value
                     Log.d(TAG , "Name :" +name + "photo url : " + photoUrl)
-                    val id = profile_info(name as String, photoUrl as String)
+                    val id = profile_info(name as String, photoUrl as String , userID)
                     profileList.add(id)
                 }
                 adapter.notifyDataSetChanged()
@@ -73,7 +77,7 @@ class Friend : Fragment() {
     }
 
     companion object {
-      private const val TAG ="Friends"
+        private const val TAG ="Friends"
     }
 }
 
@@ -85,10 +89,24 @@ class profileAdapter(profileList: List<profile_info>, requireContext: Context) :
     class profileViewHolder (view: View):RecyclerView.ViewHolder(view){
         var nameText :TextView
         var profilePic:ImageView
+        var userid :TextView
+        val NAME = "ID"
 
         init {
             nameText = view.findViewById(R.id.display_profile_name)
             profilePic = view.findViewById(R.id.display_profile_pic)
+            userid = view.findViewById(R.id.userid)
+
+            view.setOnClickListener(object : View.OnClickListener {
+                override fun onClick(v: View?) {
+
+                    view.context.startActivity(Intent(view.context , see_profile::class.java).apply {
+
+                        putExtra(NAME, userid.text.toString())
+
+                    })
+                }
+            })
         }
 
     }
@@ -103,6 +121,7 @@ class profileAdapter(profileList: List<profile_info>, requireContext: Context) :
         var index = holder.position
         Picasso.with(ctx).load(profileList.get(index).photoUrl).into(holder.profilePic)
         holder.nameText.text = profileList.get(index).name
+        holder.userid.text = profileList.get(index).userID
         Log.d(TAG ,profileList.get(index).photoUrl +": url" + profileList.get(index).name+" name")
     }
 
@@ -113,6 +132,7 @@ class profileAdapter(profileList: List<profile_info>, requireContext: Context) :
 }
 
 data class profile_info(
-    val name:String ,
-    val photoUrl: String
+        val name:String ,
+        val photoUrl: String,
+        val userID : String
 )

@@ -47,7 +47,7 @@ class profile : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        profile_name = requireView().findViewById(R.id.profile_name)
+        profile_name = requireView().findViewById(R.id.name)
         profile_image = requireView().findViewById(R.id.profile_image)
         edit_profile = requireView().findViewById(R.id.edit_profile)
         recyclerView = requireView().findViewById(R.id.recyclerView)
