@@ -23,4 +23,5 @@
     <string name="friend">Friends</string>
     <string name="name">Name</string>
     <string name="message">Message</string>
+    <string name="sent">Sent</string>
 </resources>

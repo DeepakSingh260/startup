@@ -27,6 +27,7 @@
         <activity android:name=".set_profile" />
         <activity android:name=".logIn" />
         <activity android:name=".signIn" />
+        <activity android:name=".message"/>
         <activity android:name=".splash_screen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
