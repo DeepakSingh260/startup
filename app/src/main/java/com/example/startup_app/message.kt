@@ -3,6 +3,8 @@ package com.example.startup_app
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -33,7 +35,7 @@ class message : AppCompatActivity() {
     private  var _db = FirebaseDatabase.getInstance().getReference("chats/")
     private val user = Firebase.auth.currentUser.uid
     private  lateinit var adapter:messageAdapter
-    private lateinit var chatList:ArrayList<chatInfo>
+    private lateinit var chatList:MutableList<chatInfo>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,40 +55,47 @@ class message : AppCompatActivity() {
 
         val userId = intent.extras?.getString("id")
         Toast.makeText(this , "user Id : " +userId ,Toast.LENGTH_SHORT).show()
-
-        _db.child(user+"/").child(userId.toString()).addValueEventListener(object :
+        var i:Int = 0
+        _db.child(user+"/").child(userId.toString()).addListenerForSingleValueEvent(object :
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d(TAG , "Data set change function is called")
-                chatList.removeAll(Collections.emptyList())
+
+                Log.d(TAG , "Data set change function is called for the " +i.toString() +"times")
+                chatList.removeAll(Collections.EMPTY_LIST)
                 Log.d(TAG , " before size of chat list  " + chatList.size)
                 for (postSnapshot in snapshot.children.iterator()) {
                     Log.d(TAG, "Snap  :  " + postSnapshot)
-                    if (postSnapshot != null) {
-                        val id = postSnapshot.child("id").value
-                        val timeStamp = postSnapshot.child("timeStamp").value
-                        val photoUrl = postSnapshot.child("photoUrl").value
-                        val message = postSnapshot.child("message").value
-                        val name = postSnapshot.child("name").value
-                        chatList.add(
-                            chatInfo(
-                                id.toString(),
-                                timeStamp.toString(),
-                                message.toString(),
-                                photoUrl.toString(),
-                                name.toString()
-                            )
+
+                    val id = postSnapshot.child("id").value
+                    val timeStamp = postSnapshot.child("timeStamp").value
+                    val photoUrl = postSnapshot.child("photoUrl").value
+                    val message = postSnapshot.child("message").value
+                    val name = postSnapshot.child("name").value
+                    chatList.add(
+                        chatInfo(
+                            id.toString(),
+                            timeStamp.toString(),
+                            message.toString(),
+                            photoUrl.toString(),
+                            name.toString()
                         )
+                    )
                         Log.d(TAG, "size of chat list  " + chatList.size)
-                    }
+
                 }
+                Log.d(TAG , "Chat List "+chatList.toString())
+
                 adapter.notifyDataSetChanged()
+                _db.removeEventListener(this)
             }
 
             override fun onCancelled(error: DatabaseError) {
 
             }
-        })
+        }
+
+        )
+
 
 
 
@@ -115,15 +124,53 @@ class message : AppCompatActivity() {
                 push.child("message").setValue(message.toString())
                 push.child("timeStamp").setValue(timeStamp.toString())
 //                edit_message.setText("")
-
+                i=0
                 val pushTo = _db.child(userId.toString()+"/").child(user+"/").push()
                 pushTo.child("id").setValue(id.toString())
                 pushTo.child("photoUrl").setValue(photoUrl.toString())
                 pushTo.child("name").setValue(name.toString())
                 pushTo.child("message").setValue(message.toString())
                 pushTo.child("timeStamp").setValue(timeStamp.toString())
-                edit_message.setText("")
+                edit_message.text.clear()
+                _db.child(user+"/").child(userId.toString()).addListenerForSingleValueEvent(object :
+                    ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        i++
+                        Log.d(TAG , "Data click set change function is called for the  " +i.toString() +"times")
+                        chatList.clear()
+                        Log.d(TAG , " before size of chat list  " + chatList.toString())
+                        for (postSnapshot in snapshot.children.iterator()) {
+                            Log.d(TAG, "Snap  :  " + postSnapshot)
 
+                            val id = postSnapshot.child("id").value
+                            val timeStamp = postSnapshot.child("timeStamp").value
+                            val photoUrl = postSnapshot.child("photoUrl").value
+                            val message = postSnapshot.child("message").value
+                            val name = postSnapshot.child("name").value
+                            chatList.add(
+                                chatInfo(
+                                    id.toString(),
+                                    timeStamp.toString(),
+                                    message.toString(),
+                                    photoUrl.toString(),
+                                    name.toString()
+                                )
+                            )
+                            Log.d(TAG, "size of chat list  " + chatList.size)
+
+                        }
+                        Log.d(TAG , "Chat List "+chatList.toString())
+
+                        adapter.notifyDataSetChanged()
+                        _db.removeEventListener(this)
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+                }
+
+                )
 
             }
 
@@ -149,14 +196,14 @@ class messageAdapter(applicationContext: Context, chatList: ArrayList<chatInfo>)
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): messageViewHolder {
-        Log.d(TAG , " on crate view")
+//        Log.d(TAG , " on crate view")
         val view = LayoutInflater.from(parent.context).inflate(R.layout.chat_message , parent,false , )
         return messageViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: messageViewHolder, position: Int) {
 
-        Log.d(TAG ,"Chat List : "+ChatList.toString())
+//        Log.d(TAG ,"Chat List : "+ChatList.toString())
 
         if (ChatList.get(position).id==user){
 
@@ -172,7 +219,7 @@ class messageAdapter(applicationContext: Context, chatList: ArrayList<chatInfo>)
     }
 
     override fun getItemCount(): Int {
-        Log.d(TAG , "Size : "+ChatList.size.toString())
+        Log.d(TAG , "message Size : "+ChatList.size.toString())
       return ChatList.size
     }
 
