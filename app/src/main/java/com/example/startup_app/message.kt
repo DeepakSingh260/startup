@@ -22,6 +22,7 @@ import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.log
 
 class message : AppCompatActivity() {
     private lateinit var sent_button:Button
@@ -32,7 +33,7 @@ class message : AppCompatActivity() {
     private  var _db = FirebaseDatabase.getInstance().getReference("chats/")
     private val user = Firebase.auth.currentUser.uid
     private  lateinit var adapter:messageAdapter
-    private lateinit var chatList:MutableList<chatInfo>
+    private lateinit var chatList:ArrayList<chatInfo>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,37 +53,32 @@ class message : AppCompatActivity() {
 
         val userId = intent.extras?.getString("id")
         Toast.makeText(this , "user Id : " +userId ,Toast.LENGTH_SHORT).show()
-        _db.child(user.toString()).setValue(user.toString())
-        _db.child(userId.toString()).setValue(userId.toString())
 
-        _db.child(user+"/"+userId+"/").addValueEventListener(object : ValueEventListener {
+        _db.child(user+"/").child(userId.toString()).addValueEventListener(object :
+            ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                Log.d(TAG , "Data set change function is called")
                 chatList.removeAll(Collections.emptyList())
-                for (postSnapshot in snapshot.children){
-                    val id = snapshot.child(user+"/").key
-                    var photourl:String? = ""
-                    _db.child("profiles").addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            if(id!=null) {
-
-                                photourl = snapshot.child(id+ "/" + "profileUrl").value.toString()
-                            }
-
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-
-                        }
-
-                    })
-
-
-                    for (snap in postSnapshot.children) {
-                        val message = snap.value.toString()
-                        chatList.add(chatInfo(id.toString(), message.toString() , photourl))
+                Log.d(TAG , " before size of chat list  " + chatList.size)
+                for (postSnapshot in snapshot.children.iterator()) {
+                    Log.d(TAG, "Snap  :  " + postSnapshot)
+                    if (postSnapshot != null) {
+                        val id = postSnapshot.child("id").value
+                        val timeStamp = postSnapshot.child("timeStamp").value
+                        val photoUrl = postSnapshot.child("photoUrl").value
+                        val message = postSnapshot.child("message").value
+                        val name = postSnapshot.child("name").value
+                        chatList.add(
+                            chatInfo(
+                                id.toString(),
+                                timeStamp.toString(),
+                                message.toString(),
+                                photoUrl.toString(),
+                                name.toString()
+                            )
+                        )
+                        Log.d(TAG, "size of chat list  " + chatList.size)
                     }
-
-
                 }
                 adapter.notifyDataSetChanged()
             }
@@ -91,6 +87,7 @@ class message : AppCompatActivity() {
 
             }
         })
+
 
 
         FirebaseDatabase.getInstance().getReference("profiles").child(userId.toString() +"/").addValueEventListener(object :  ValueEventListener {
@@ -106,7 +103,25 @@ class message : AppCompatActivity() {
         })
         sent_button.setOnClickListener(object :  View.OnClickListener {
             override fun onClick(v: View?) {
-                _db.child(user+"/"+userId+"/"+user+"/") .child( SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())).setValue(edit_message.text.toString())
+                val id = user
+                val message = edit_message.text.toString()
+                val photoUrl = Firebase.auth.currentUser.photoUrl
+                val name = Firebase.auth.currentUser.displayName
+                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+                val push = _db.child(user+"/").child(userId.toString()+"/").push()
+                push.child("id").setValue(id.toString())
+                push.child("photoUrl").setValue(photoUrl.toString())
+                push.child("name").setValue(name.toString())
+                push.child("message").setValue(message.toString())
+                push.child("timeStamp").setValue(timeStamp.toString())
+//                edit_message.setText("")
+
+                val pushTo = _db.child(userId.toString()+"/").child(user+"/").push()
+                pushTo.child("id").setValue(id.toString())
+                pushTo.child("photoUrl").setValue(photoUrl.toString())
+                pushTo.child("name").setValue(name.toString())
+                pushTo.child("message").setValue(message.toString())
+                pushTo.child("timeStamp").setValue(timeStamp.toString())
                 edit_message.setText("")
 
 
@@ -117,15 +132,18 @@ class message : AppCompatActivity() {
 }
 
 class messageAdapter(applicationContext: Context, chatList: ArrayList<chatInfo>) : RecyclerView.Adapter<messageAdapter.messageViewHolder>(){
-    val chatList = chatList
+    val ChatList = chatList
     val ctx = applicationContext
     val user = Firebase.auth.currentUser.uid
 
     class messageViewHolder(view:View) :RecyclerView.ViewHolder(view) {
             val message:TextView
-
+            val name:TextView
+            val profilePhoto:ImageView
         init {
             message = view.findViewById(R.id.chat_message)
+            name = view.findViewById(R.id.profile_name_)
+            profilePhoto = view.findViewById(R.id.profile_photo)
         }
     }
 
@@ -138,27 +156,33 @@ class messageAdapter(applicationContext: Context, chatList: ArrayList<chatInfo>)
 
     override fun onBindViewHolder(holder: messageViewHolder, position: Int) {
 
-        Log.d(TAG ,"Chat List : "+chatList.toString())
+        Log.d(TAG ,"Chat List : "+ChatList.toString())
 
-        if (chatList.get(position).id==user){
+        if (ChatList.get(position).id==user){
 
-            holder.message.text = chatList.get(position).message
-            holder.message.gravity = Gravity.RIGHT
+            holder.message.text = ChatList.get(position).message
+
+            holder.name.text = ChatList.get(position).name
+            Picasso.with(ctx).load(ChatList.get(position).photoUrl).into(holder.profilePhoto)
         }else{
-            holder.message.text = chatList.get(position).message
-            holder.message.gravity = Gravity.LEFT
+            holder.message.text = ChatList.get(position).message
+            holder.name.text = ChatList.get(position).name
+            Picasso.with(ctx).load(ChatList.get(position).photoUrl).into(holder.profilePhoto)
         }
     }
 
     override fun getItemCount(): Int {
-      return chatList.size
+        Log.d(TAG , "Size : "+ChatList.size.toString())
+      return ChatList.size
     }
 
 }
 
 data class chatInfo(
-    val id :String,
+    val id : String,
+    val timeStamp :String,
     val message : String ,
-    val photoUrl:String?
+    val photoUrl:String,
+    val name:String
 )
 

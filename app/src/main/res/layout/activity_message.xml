@@ -24,21 +24,34 @@
         android:id="@+id/sent_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="662dp"
         android:text="@string/sent"
+        app:layout_constraintBaseline_toBaselineOf="@+id/type_message"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.777"
-        app:layout_constraintStart_toEndOf="@+id/type_message"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/type_message" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycleChatMessage"
-        android:layout_width="410dp"
+    <ScrollView
+        android:layout_width="399dp"
         android:layout_height="461dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/type_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.922" />
+        app:layout_constraintTop_toBottomOf="@+id/name_display">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycleChatMessage"
+            android:layout_width="410dp"
+            android:layout_height="461dp"
+            app:layout_constraintBottom_toTopOf="@+id/type_message"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.922" />
+
+
+    </ScrollView>
 
     <de.hdodenhof.circleimageview.CircleImageView
 
@@ -73,6 +86,4 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_other" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
