@@ -56,13 +56,13 @@ class message : AppCompatActivity() {
         val userId = intent.extras?.getString("id")
         Toast.makeText(this , "user Id : " +userId ,Toast.LENGTH_SHORT).show()
         var i:Int = 0
-        _db.child(user+"/").child(userId.toString()).addListenerForSingleValueEvent(object :
+        _db.child(user+"/").child(userId.toString()).addValueEventListener(object :
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-
-                Log.d(TAG , "Data set change function is called for the " +i.toString() +"times")
-                chatList.removeAll(Collections.EMPTY_LIST)
-                Log.d(TAG , " before size of chat list  " + chatList.size)
+                i++
+                Log.d(TAG , "Data click set change function is called for the  " +i.toString() +"times")
+                chatList.clear()
+                Log.d(TAG , " before size of chat list  " + chatList.toString())
                 for (postSnapshot in snapshot.children.iterator()) {
                     Log.d(TAG, "Snap  :  " + postSnapshot)
 
@@ -80,7 +80,7 @@ class message : AppCompatActivity() {
                             name.toString()
                         )
                     )
-                        Log.d(TAG, "size of chat list  " + chatList.size)
+                    Log.d(TAG, "size of chat list  " + chatList.size)
 
                 }
                 Log.d(TAG , "Chat List "+chatList.toString())
@@ -95,7 +95,6 @@ class message : AppCompatActivity() {
         }
 
         )
-
 
 
 
@@ -132,45 +131,7 @@ class message : AppCompatActivity() {
                 pushTo.child("message").setValue(message.toString())
                 pushTo.child("timeStamp").setValue(timeStamp.toString())
                 edit_message.text.clear()
-                _db.child(user+"/").child(userId.toString()).addListenerForSingleValueEvent(object :
-                    ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        i++
-                        Log.d(TAG , "Data click set change function is called for the  " +i.toString() +"times")
-                        chatList.clear()
-                        Log.d(TAG , " before size of chat list  " + chatList.toString())
-                        for (postSnapshot in snapshot.children.iterator()) {
-                            Log.d(TAG, "Snap  :  " + postSnapshot)
 
-                            val id = postSnapshot.child("id").value
-                            val timeStamp = postSnapshot.child("timeStamp").value
-                            val photoUrl = postSnapshot.child("photoUrl").value
-                            val message = postSnapshot.child("message").value
-                            val name = postSnapshot.child("name").value
-                            chatList.add(
-                                chatInfo(
-                                    id.toString(),
-                                    timeStamp.toString(),
-                                    message.toString(),
-                                    photoUrl.toString(),
-                                    name.toString()
-                                )
-                            )
-                            Log.d(TAG, "size of chat list  " + chatList.size)
-
-                        }
-                        Log.d(TAG , "Chat List "+chatList.toString())
-
-                        adapter.notifyDataSetChanged()
-                        _db.removeEventListener(this)
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-
-                    }
-                }
-
-                )
 
             }
 

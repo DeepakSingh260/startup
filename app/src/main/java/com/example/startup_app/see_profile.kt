@@ -9,11 +9,15 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class see_profile : AppCompatActivity() {
@@ -29,7 +33,7 @@ class see_profile : AppCompatActivity() {
         val profilePic:ImageView = findViewById(R.id.profile_image_other)
         val name:TextView = findViewById(R.id.name)
         val messageButton: Button = findViewById(R.id.message)
-
+        val connectButton : Button = findViewById(R.id.connect)
 
         Toast.makeText(this , "user ID : "+userId , Toast.LENGTH_SHORT).show()
         _db.child(userId +"/").addValueEventListener(object :  ValueEventListener {
@@ -55,6 +59,22 @@ class see_profile : AppCompatActivity() {
                     putExtra("id" , userId)
                 })
 
+            }
+        })
+
+        connectButton.setOnClickListener (object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                val push = FirebaseDatabase.getInstance().getReference("follows").child(Firebase.auth.currentUser.uid+"/").child(userId.toString()+"/")
+                push.child("id").setValue(userId.toString())
+                push.child("photoUrl").setValue(profile_url.toString())
+                push.child("name").setValue(profile_name.toString())
+                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+                push.child("timeStamp").setValue(timeStamp.toString())
+
+
+
+
+                Toast.makeText(this@see_profile , "connect"  , Toast.LENGTH_SHORT).show()
             }
         })
 
