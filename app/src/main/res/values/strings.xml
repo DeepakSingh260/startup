@@ -24,4 +24,8 @@
     <string name="name">Name</string>
     <string name="message">Message</string>
     <string name="sent">Sent</string>
+    <string name="post">Post</string>
+    <string name="postfromgallery">Post from Gallery</string>
+    <string name="writeablog">Write a Blog</string>
+    <string name="directocamera">Redirect to Camera</string>
 </resources>

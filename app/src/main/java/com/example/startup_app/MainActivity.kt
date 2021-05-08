@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
                     R.id.camera ->supportFragmentManager.beginTransaction().apply { replace(R.id.frame ,camera()).commit() }
                     R.id.home ->supportFragmentManager.beginTransaction().apply { replace(R.id.frame ,home()).commit() }
                     R.id.friends ->supportFragmentManager.beginTransaction().apply { replace(R.id.frame ,Friend()).commit() }
+                    R.id.posts->supportFragmentManager.beginTransaction().apply { replace(R.id.frame,post_things()).commit() }
                 }
 
                  true

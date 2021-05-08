@@ -10,7 +10,13 @@
     android:icon="@drawable/camera"
     android:title="@string/camera"
     />
-<item
+    <item
+        android:id="@+id/posts"
+        android:icon="@drawable/post"
+        android:title="@string/post"
+        />
+
+    <item
     android:id="@+id/friends"
     android:icon="@drawable/friends"
     android:title="@string/friend"
