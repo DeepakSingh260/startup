@@ -17,9 +17,7 @@ import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
@@ -30,6 +28,7 @@ import java.io.IOException
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class camera : Fragment() {
@@ -45,7 +44,7 @@ class camera : Fragment() {
     private lateinit var ctx: Context
     private val user = Firebase.auth.currentUser
     private  var downloadUrl:Uri? = null
-
+    private lateinit var listID:MutableList<String>
     private  val _db = FirebaseDatabase.getInstance().getReference("images/")
 
 
@@ -126,7 +125,7 @@ class camera : Fragment() {
         upload.visibility = View.INVISIBLE
         download.visibility = View.INVISIBLE
         ctx = requireContext()
-
+        listID = ArrayList()
         if (checkCameraHardware(ctx)){
             mcamera = getCameraInstance()
             mpreview = mcamera?.let {
@@ -158,6 +157,22 @@ class camera : Fragment() {
                 }
 
             }
+            FirebaseDatabase.getInstance().getReference("followers/").child(user.uid+"/").addValueEventListener(
+                object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        listID.clear()
+                        for(postSnapshot in snapshot.children){
+                            Log.d(TAG ,"post snap shots"+ snapshot.children.toString())
+                            val id = postSnapshot.child("id/").value
+                            Log.d(TAG , "ID : " +id)
+                            listID.add(id.toString())
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+                })
 
             upload.setOnClickListener {
 
@@ -190,6 +205,18 @@ class camera : Fragment() {
                          downloadUrl = it.result!!
                         Toast.makeText(requireContext() , "uploaded" , Toast.LENGTH_SHORT).show()
                         _db.child(user.uid+"/").push().setValue(downloadUrl.toString())
+
+
+                        Log.d(TAG , "list id "+listID)
+                        for (i in listID){
+                            val push = FirebaseDatabase.getInstance().getReference("profiles").child(i+"/").child("posts/").child(user.uid+"/").push()
+                            push.child("id").setValue(user.uid).toString()
+                            push.child("name").setValue(user.displayName.toString())
+                            push.child("profileUrl").setValue(user.photoUrl.toString())
+                            push.child("postUrl").setValue(downloadUrl.toString())
+                            val timeStamp = SimpleDateFormat("dd:MM:yyyy").format(Date())
+                            push.child("timeStamp").setValue(timeStamp)
+                        }
                     }
                 }
 

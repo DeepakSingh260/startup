@@ -68,10 +68,13 @@ class see_profile : AppCompatActivity() {
                 push.child("id").setValue(userId.toString())
                 push.child("photoUrl").setValue(profile_url.toString())
                 push.child("name").setValue(profile_name.toString())
-                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+                val timeStamp = SimpleDateFormat("dd:MM:yyyy").format(Date())
                 push.child("timeStamp").setValue(timeStamp.toString())
-
-
+                val newPush = FirebaseDatabase.getInstance().getReference("followers").child(userId.toString()+"/").child(Firebase.auth.currentUser.uid+"/")
+                newPush.child("id").setValue(Firebase.auth.currentUser.uid)
+                newPush.child("name").setValue(Firebase.auth.currentUser.displayName.toString())
+                newPush.child("photoUrl").setValue(Firebase.auth.currentUser.photoUrl.toString())
+                newPush.child("timeStamp").setValue(timeStamp)
 
 
                 Toast.makeText(this@see_profile , "connect"  , Toast.LENGTH_SHORT).show()
