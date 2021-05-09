@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
 
 class BlogPost : AppCompatActivity() {
 
@@ -22,8 +24,13 @@ class BlogPost : AppCompatActivity() {
         postBlog.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 blogText = wrtieBlog.text.toString()
-                val push = FirebaseDatabase.getInstance().getReference("profiles").child("blog")
-                push.child("blog_text").setValue(blogText)
+                val  pushBlog = FirebaseDatabase.getInstance().getReference("blogs/").child(Firebase.auth.currentUser.uid+"/").push()
+                pushBlog.child("blog").setValue(blogText)
+                pushBlog.child("comments").setValue("Comment")
+                pushBlog.child("likes").setValue("Like")
+                pushBlog.child("TYPE").setValue("2")
+
+
             }
         })
 

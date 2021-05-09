@@ -77,6 +77,18 @@ class profile : Fragment() {
             }
         })
 
+        FirebaseDatabase.getInstance().getReference("blogs").child(user.uid+"/").addValueEventListener(
+            object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+            })
+
+
         for(i in imageList){
             Log.d(TAG ,"234" + i)
 
@@ -165,4 +177,9 @@ private class imageAdapter(imageList: ArrayList<String?>, requireContext: Contex
         }
             return img_list.size
     }
+
+    override fun getItemViewType(position: Int): Int {
+        return super.getItemViewType(position)
+    }
 }
+

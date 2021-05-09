@@ -63,7 +63,7 @@ class Friend : Fragment() {
                     val photoUrl = postSnapshot.child("profileUrl/").value
                     val name = postSnapshot.child("name/").value
                     Log.d(TAG , "Name :" +name + "photo url : " + photoUrl)
-                    val id = profile_info(name as String, photoUrl as String , userID)
+                    val id = profile_info(name!! as String, photoUrl!! as String , userID!!)
                     profileList.add(id)
                 }
                 adapter.notifyDataSetChanged()

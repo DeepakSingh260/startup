@@ -204,8 +204,8 @@ class camera : Fragment() {
                     if (it.isSuccessful){
                          downloadUrl = it.result!!
                         Toast.makeText(requireContext() , "uploaded" , Toast.LENGTH_SHORT).show()
-                        _db.child(user.uid+"/").push().setValue(downloadUrl.toString())
-
+                        _db.child(user.uid+"/").push().child("photoUrl").setValue(downloadUrl.toString())
+                        _db.child(user.uid+"/").push().child("TYPE").setValue("1")
 
                         Log.d(TAG , "list id "+listID)
                         for (i in listID){
