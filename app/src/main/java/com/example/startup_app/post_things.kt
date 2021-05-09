@@ -38,6 +38,12 @@ class post_things : Fragment() {
                 GalleryOpener()
             }
         })
+
+        writeABlog.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                startActivity(Intent(requireContext() , BlogPost::class.java))
+            }
+        })
     }
 
     private fun GalleryOpener(){
