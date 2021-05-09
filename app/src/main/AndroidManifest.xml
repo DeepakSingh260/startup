@@ -23,11 +23,13 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/Theme.Startup_app">
-        <activity android:name=".see_profile"></activity>
+        <activity android:name=".BlogPost"></activity>
+        <activity android:name=".uploadGallery" />
+        <activity android:name=".see_profile" />
         <activity android:name=".set_profile" />
         <activity android:name=".logIn" />
         <activity android:name=".signIn" />
-        <activity android:name=".message"/>
+        <activity android:name=".message" />
         <activity android:name=".splash_screen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,9 +37,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
-
-        </activity>
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

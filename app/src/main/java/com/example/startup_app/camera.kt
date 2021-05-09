@@ -262,7 +262,7 @@ class camera : Fragment() {
         return inflater.inflate(R.layout.fragment_camera, container, false)
     }
     companion object{
-        private const val TAG = "snap"
+        const val TAG = "snap"
     }
 
 

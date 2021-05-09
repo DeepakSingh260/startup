@@ -108,7 +108,7 @@ import com.google.firebase.storage.UploadTask
         intent = Intent()
         intent.setType("image/*")
         intent.setAction(Intent.ACTION_GET_CONTENT)
-        startActivityForResult(Intent.createChooser(intent,"Select Pictire") ,SELECT_PICTURE)
+        startActivityForResult(Intent.createChooser(intent,"Select Picture") ,SELECT_PICTURE)
     }
 
      override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
