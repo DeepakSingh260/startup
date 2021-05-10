@@ -45,7 +45,7 @@ class camera : Fragment() {
     private val user = Firebase.auth.currentUser
     private  var downloadUrl:Uri? = null
     private lateinit var listID:MutableList<String>
-    private  val _db = FirebaseDatabase.getInstance().getReference("images/")
+    private  val _db = FirebaseDatabase.getInstance().getReference("posts/")
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -204,8 +204,9 @@ class camera : Fragment() {
                     if (it.isSuccessful){
                          downloadUrl = it.result!!
                         Toast.makeText(requireContext() , "uploaded" , Toast.LENGTH_SHORT).show()
-                        _db.child(user.uid+"/").push().child("photoUrl").setValue(downloadUrl.toString())
-                        _db.child(user.uid+"/").push().child("TYPE").setValue("1")
+                        val push = _db.child(user.uid+"/").push()
+                        push.child("photoUrl").setValue(downloadUrl.toString())
+                        push.child("TYPE").setValue(1)
 
                         Log.d(TAG , "list id "+listID)
                         for (i in listID){

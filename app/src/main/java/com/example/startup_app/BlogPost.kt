@@ -24,11 +24,11 @@ class BlogPost : AppCompatActivity() {
         postBlog.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 blogText = wrtieBlog.text.toString()
-                val  pushBlog = FirebaseDatabase.getInstance().getReference("blogs/").child(Firebase.auth.currentUser.uid+"/").push()
+                val  pushBlog = FirebaseDatabase.getInstance().getReference("posts/").child(Firebase.auth.currentUser.uid+"/").push()
                 pushBlog.child("blog").setValue(blogText)
                 pushBlog.child("comments").setValue("Comment")
                 pushBlog.child("likes").setValue("Like")
-                pushBlog.child("TYPE").setValue("2")
+                pushBlog.child("TYPE").setValue(2)
 
 
             }

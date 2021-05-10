@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,8 +35,8 @@ class profile : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapterImage: imageAdapter
     val user = Firebase.auth.currentUser
-    private val _db = FirebaseDatabase.getInstance().getReference("images/"+user.uid +"/")
-    var imageList  = ArrayList<String?>()
+    private val _db = FirebaseDatabase.getInstance().getReference("posts/"+user.uid +"/")
+    var imageList = ArrayList<post?>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,9 +62,14 @@ class profile : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 imageList.removeAll(Collections.emptyList())
                 for (postSnapshot in snapshot.children.iterator()){
-                    imageList.add(postSnapshot.value.toString())
+
+                        val photo = postSnapshot.child("photoUrl").value.toString()
+                        val type:Int = postSnapshot.child("TYPE").value!!.toString().toInt()
+                        val blog = postSnapshot.child("blog").value.toString()
+                        imageList.add(post(photo , type , blog))
 
                 }
+                Log.d(TAG , " IMG_LIST : " + imageList)
                 adapterImage.notifyDataSetChanged()
 
 
@@ -76,17 +80,6 @@ class profile : Fragment() {
 
             }
         })
-
-        FirebaseDatabase.getInstance().getReference("blogs").child(user.uid+"/").addValueEventListener(
-            object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-
-                }
-            })
 
 
         for(i in imageList){
@@ -143,32 +136,49 @@ class profile : Fragment() {
 
 }
 
-private class imageAdapter(imageList: ArrayList<String?>, requireContext: Context) : RecyclerView.Adapter<imageAdapter.imageViewHolder>()  {
+private class imageAdapter(imageList: ArrayList<post?>, requireContext: Context) : RecyclerView.Adapter< RecyclerView.ViewHolder>()  {
     var ctx = requireContext
     var img_list = imageList
 
     class imageViewHolder(view: View):RecyclerView.ViewHolder(view) {
             val image:ImageView
+            val name :TextView
+            val pic :ImageView
             init {
-                image = view.findViewById(R.id.img_view)
+                image = itemView.findViewById(R.id.img_view)
+                pic = itemView.findViewById(R.id.your_image)
+                name = itemView.findViewById(R.id.your_profile_name)
             }
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): imageViewHolder {
+
+    class blogViewHolder (view: View) : RecyclerView.ViewHolder(view){
+        val pic:ImageView
+        val name : TextView
+        val blog:TextView
+        init {
+            pic = itemView.findViewById(R.id.my_image)
+            name = itemView.findViewById(R.id.my_name)
+            blog = itemView.findViewById(R.id.Blog)
+        }
+
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):  RecyclerView.ViewHolder  {
         Log.d(TAG , "on create view holder")
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.viewholder,parent , false)
-        return imageViewHolder(view)
+        if (viewType==1) {
+            val view =LayoutInflater.from(parent.context).inflate(R.layout.viewholder, parent, false)
+            return imageViewHolder(view)
+        }
+        else{
+            val view =LayoutInflater.from(parent.context).inflate(R.layout.cardblogview, parent, false)
+            return blogViewHolder(view)
+        }
 
     }
 
-    override fun onBindViewHolder(holder: imageViewHolder, position: Int) {
 
-            var index = holder.adapterPosition
-            Log.d(TAG ,"list 1"+img_list[index] )
-            Picasso.with(ctx).load(img_list.get(position)!!.toUri()).into(holder.image)
-//            holder.image.setImageURI(img_list[position].toUri())
-    }
 
     override fun getItemCount(): Int {
 
@@ -179,7 +189,38 @@ private class imageAdapter(imageList: ArrayList<String?>, requireContext: Contex
     }
 
     override fun getItemViewType(position: Int): Int {
-        return super.getItemViewType(position)
+        if (img_list.get(position)!!.type == 1){
+            return 1
+        }
+        if((img_list.get(position)!!.type == 2)){
+            return 2
+        }
+        else{
+            return super.getItemViewType(position)
+        }
+    }
+
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
+        when(holder.itemViewType){
+            1-> imagePost(position , holder as imageViewHolder)
+            2-> blogPost(position , holder as blogViewHolder)
+        }
+
+    }
+    fun imagePost(position: Int, holder: imageViewHolder){
+        Picasso.with(ctx).load(img_list.get(position)!!.photoUrl).into(holder.image)
+        Picasso.with(ctx).load( Firebase.auth.currentUser.photoUrl).into(holder.pic)
+        holder.name.text = Firebase.auth.currentUser.displayName
+    }
+
+    fun blogPost(position: Int, holder: blogViewHolder){
+        holder.name.text = Firebase.auth.currentUser.displayName
+        holder.blog.text = img_list.get(position)!!.blog
+        Picasso.with(ctx).load( Firebase.auth.currentUser.photoUrl).into(holder.pic)
+
     }
 }
+data class post(val photoUrl:String? , val type:Int? , val blog:String? )
 
