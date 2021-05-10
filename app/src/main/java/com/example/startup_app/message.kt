@@ -115,7 +115,7 @@ class message : AppCompatActivity() {
                 val message = edit_message.text.toString()
                 val photoUrl = Firebase.auth.currentUser.photoUrl
                 val name = Firebase.auth.currentUser.displayName
-                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+                val timeStamp = SimpleDateFormat("HH:mm").format(Date())
                 val push = _db.child(user+"/").child(userId.toString()+"/").push()
                 push.child("id").setValue(id.toString())
                 push.child("photoUrl").setValue(photoUrl.toString())
@@ -148,10 +148,12 @@ class messageAdapter(applicationContext: Context, chatList: ArrayList<chatInfo>)
             val message:TextView
             val name:TextView
             val profilePhoto:ImageView
+            val timeStamp :TextView
         init {
             message = view.findViewById(R.id.chat_message)
             name = view.findViewById(R.id.profile_name_)
-            profilePhoto = view.findViewById(R.id.profile_photo)
+            profilePhoto = view.findViewById(R.id.profile_photo__)
+            timeStamp = view.findViewById(R.id.messageTime)
         }
     }
 
@@ -172,10 +174,12 @@ class messageAdapter(applicationContext: Context, chatList: ArrayList<chatInfo>)
 
             holder.name.text = ChatList.get(position).name
             Picasso.with(ctx).load(ChatList.get(position).photoUrl).into(holder.profilePhoto)
+            holder.timeStamp.text = ChatList.get(position).timeStamp
         }else{
             holder.message.text = ChatList.get(position).message
             holder.name.text = ChatList.get(position).name
             Picasso.with(ctx).load(ChatList.get(position).photoUrl).into(holder.profilePhoto)
+            holder.timeStamp.text = ChatList.get(position).timeStamp
         }
     }
 
