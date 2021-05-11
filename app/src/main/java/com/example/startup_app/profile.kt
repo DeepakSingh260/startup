@@ -64,7 +64,7 @@ class profile : Fragment() {
                 for (postSnapshot in snapshot.children.iterator()){
 
                         val photo = postSnapshot.child("photoUrl").value.toString()
-                        val type:Int = postSnapshot.child("TYPE").value!!.toString().toInt()
+                        val type:Int? = postSnapshot.child("TYPE").value.toString().toInt()
                         val blog = postSnapshot.child("blog").value.toString()
                         imageList.add(post(photo , type , blog))
 

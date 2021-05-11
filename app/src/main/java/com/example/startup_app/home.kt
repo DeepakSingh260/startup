@@ -79,8 +79,10 @@ class home : Fragment() {
                             val id = shot.child("id").value.toString()
                             val name = shot.child("name").value.toString()
                             val profileUrl = shot.child("profileUrl").value.toString()
-                            val postUrl = shot.child("postUrl").value.toString()
-                            postList.add(post_data(id, name, profileUrl, postUrl))
+                            val postUrl = shot.child("postUrl")?.value.toString()
+                            val blog = shot.child("blog").value?.toString()
+                            val TYPE = shot.child("TYPE").value.toString().toInt()
+                            postList.add(post_data(id, name, profileUrl, postUrl , TYPE , blog ))
                         }
                     }
                     Log.d(TAG , "PostList" + postList)
@@ -148,7 +150,7 @@ class profileView(requireContext: Context, profileList: ArrayList<profile_data>)
     }
 }
 
-class PostData(requireContext: Context, postList: ArrayList<post_data>) : RecyclerView.Adapter<PostData.PostViewHolder>(){
+class PostData(requireContext: Context, postList: ArrayList<post_data>) : RecyclerView.Adapter< RecyclerView.ViewHolder>(){
     val ctx =requireContext
     val postList = postList
 
@@ -162,28 +164,71 @@ class PostData(requireContext: Context, postList: ArrayList<post_data>) : Recycl
             post = view.findViewById(R.id.post)
         }
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.postcardview , parent , false)
-        return PostViewHolder(view)
+    class BlogPostHolder(view: View) : RecyclerView.ViewHolder(view){
+        val pic:ImageView
+        val name : TextView
+        val blog:TextView
+        init {
+            pic = itemView.findViewById(R.id.my_image)
+            name = itemView.findViewById(R.id.my_name)
+            blog = itemView.findViewById(R.id.Blog)
+        }
     }
 
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        if (viewType==1) {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.postcardview, parent, false)
+            return PostViewHolder(view)
+        }else{
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.cardblogview, parent, false)
+            return BlogPostHolder(view)
+        }
+
+    }
+
+     fun ImagePost(holder: PostViewHolder, position: Int) {
         holder.name.text = postList.get(position).name
         Picasso.with(ctx).load(postList.get(position).profileUrl).into(holder.profilePhoto)
         Picasso.with(ctx).load(postList.get(position).postUrl).into(holder.post)
+    }
+    fun BlogPost(holder:BlogPostHolder , position: Int){
+        holder.name.text =postList.get(position).name
+        holder.blog.text = postList.get(position)!!.blog
+        Picasso.with(ctx).load( postList.get(position).profileUrl).into(holder.pic)
     }
 
     override fun getItemCount(): Int {
         return postList.size
     }
+
+    override fun getItemViewType(position: Int): Int {
+        if (postList.get(position)!!.TYPE == 1){
+            return 1
+        }
+        if((postList.get(position)!!.TYPE == 2)){
+            return 2
+        }
+        else{
+            return super.getItemViewType(position)
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when(holder.itemViewType){
+            1-> ImagePost(holder as PostViewHolder, position)
+            2->BlogPost(holder as BlogPostHolder, position)
+        }
+    }
+
 }
 
 data class post_data(
     val id: String,
     val name: String,
     val profileUrl : String,
-    val postUrl:String
+    val postUrl:String?,
+    val TYPE :Int? ,
+    val blog:String?
 )
 
 data class profile_data(

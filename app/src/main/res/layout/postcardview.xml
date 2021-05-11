@@ -41,6 +41,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_below="@+id/profile_image_post" />
+            <ImageButton
+                android:id="@+id/likeButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/post"
+                android:src="@drawable/thumbsup"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/fui_transparent"/>
+
+            <ImageButton
+                android:id="@+id/commentButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/post"
+                android:layout_toRightOf="@+id/likeButton"
+                android:src="@drawable/comment"
+                android:background="@color/fui_transparent"/>
 
         </RelativeLayout>
 

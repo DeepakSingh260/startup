@@ -47,6 +47,25 @@
                 android:textAlignment="center"
                 android:textSize="18sp" />
 
+            <ImageButton
+                android:id="@+id/likeBlogButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/Blog"
+                android:src="@drawable/thumbsup"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/fui_transparent"/>
+
+            <ImageButton
+                android:id="@+id/commentBlogButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/Blog"
+                android:layout_toRightOf="@+id/likeBlogButton"
+                android:src="@drawable/comment"
+                android:background="@color/fui_transparent"/>
+
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
