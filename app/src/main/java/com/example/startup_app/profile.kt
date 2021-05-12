@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.net.toUri
+import androidx.core.text.isDigitsOnly
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -37,7 +38,7 @@ class profile : Fragment() {
     val user = Firebase.auth.currentUser
     private val _db = FirebaseDatabase.getInstance().getReference("posts/"+user.uid +"/")
     var imageList = ArrayList<post?>()
-
+    private var type:Int?= null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -64,7 +65,10 @@ class profile : Fragment() {
                 for (postSnapshot in snapshot.children.iterator()){
 
                         val photo = postSnapshot.child("photoUrl").value.toString()
-                        val type:Int? = postSnapshot.child("TYPE").value.toString().toInt()
+                    if( postSnapshot.child("TYPE").value.toString().isDigitsOnly()){
+                        type=postSnapshot.child("TYPE").value.toString().toInt()
+                    }
+
                         val blog = postSnapshot.child("blog").value.toString()
                         imageList.add(post(photo , type , blog))
 

@@ -23,7 +23,8 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/Theme.Startup_app">
-        <activity android:name=".BlogPost"></activity>
+        <activity android:name=".comment"></activity>
+        <activity android:name=".BlogPost" />
         <activity android:name=".uploadGallery" />
         <activity android:name=".see_profile" />
         <activity android:name=".set_profile" />

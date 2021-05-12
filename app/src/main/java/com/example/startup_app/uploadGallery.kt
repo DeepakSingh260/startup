@@ -78,6 +78,7 @@ class uploadGallery : AppCompatActivity() {
                             push.child("name").setValue(user.displayName.toString())
                             push.child("profileUrl").setValue(user.photoUrl.toString())
                             push.child("postUrl").setValue(downloadUrl.toString())
+                            push.child("TYPE").setValue(1)
                             val timeStamp = SimpleDateFormat("dd:MM:yyyy").format(Date())
                             push.child("timeStamp").setValue(timeStamp)
                         }

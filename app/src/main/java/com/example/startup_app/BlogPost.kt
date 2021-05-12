@@ -59,12 +59,14 @@ class BlogPost : AppCompatActivity() {
                 pushBlog.child("TYPE").setValue(2)
 
                 for (i in listID){
-                    val push = FirebaseDatabase.getInstance().getReference("profiles").child(i+"/").child("posts/").child(user.uid+"/").push()
+                    val push = FirebaseDatabase.getInstance().getReference("profiles").child(i+"/").child("posts/").push()
                     push.child("id").setValue(user.uid).toString()
                     push.child("name").setValue(user.displayName.toString())
                     push.child("profileUrl").setValue(user.photoUrl.toString())
                     push.child("blog").setValue(blogText)
                     push.child("TYPE").setValue(2)
+                    push.child("likes").setValue("Like")
+                    push.child("comments").setValue("Comment")
                     val timeStamp = SimpleDateFormat("dd:MM:yyyy").format(Date())
                     push.child("timeStamp").setValue(timeStamp)
                 }

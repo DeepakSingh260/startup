@@ -210,12 +210,14 @@ class camera : Fragment() {
 
                         Log.d(TAG , "list id "+listID)
                         for (i in listID){
-                            val push = FirebaseDatabase.getInstance().getReference("profiles").child(i+"/").child("posts/").child(user.uid+"/").push()
+                            val push = FirebaseDatabase.getInstance().getReference("profiles").child(i+"/").child("posts/").push()
                             push.child("id").setValue(user.uid).toString()
                             push.child("name").setValue(user.displayName.toString())
                             push.child("profileUrl").setValue(user.photoUrl.toString())
                             push.child("postUrl").setValue(downloadUrl.toString())
                             push.child("TYPE").setValue(1)
+                            push.child("likes").setValue("Like")
+                            push.child("comments").setValue("Comment")
                             val timeStamp = SimpleDateFormat("dd:MM:yyyy").format(Date())
                             push.child("timeStamp").setValue(timeStamp)
                         }
