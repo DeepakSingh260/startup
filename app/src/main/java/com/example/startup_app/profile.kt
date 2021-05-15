@@ -10,16 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.text.isDigitsOnly
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -70,8 +68,9 @@ class profile : Fragment() {
                     }
 
                         val blog = postSnapshot.child("blog").value.toString()
-                        imageList.add(post(photo , type , blog))
-
+                        val likePath = postSnapshot.child("likes").ref
+                        val  commentPath = postSnapshot.child("comments").ref
+                        imageList.add(post(photo , type , blog , likePath , commentPath))
                 }
                 Log.d(TAG , " IMG_LIST : " + imageList)
                 adapterImage.notifyDataSetChanged()
@@ -148,10 +147,14 @@ private class imageAdapter(imageList: ArrayList<post?>, requireContext: Context)
             val image:ImageView
             val name :TextView
             val pic :ImageView
+            val likeButton : ImageButton
+            val commentButton : ImageButton
             init {
                 image = itemView.findViewById(R.id.img_view)
                 pic = itemView.findViewById(R.id.your_image)
                 name = itemView.findViewById(R.id.your_profile_name)
+                likeButton = itemView.findViewById(R.id.likeViewButton)
+                commentButton = itemView.findViewById(R.id.commentViewButton)
             }
 
     }
@@ -161,11 +164,18 @@ private class imageAdapter(imageList: ArrayList<post?>, requireContext: Context)
         val pic:ImageView
         val name : TextView
         val blog:TextView
+        val likeButton :ImageButton
+        val commentButton : ImageButton
         init {
             pic = itemView.findViewById(R.id.my_image)
             name = itemView.findViewById(R.id.my_name)
             blog = itemView.findViewById(R.id.Blog)
+            likeButton = itemView.findViewById(R.id.likeBlogButton)
+            commentButton = itemView.findViewById(R.id.commentBlogButton)
+
+
         }
+
 
     }
 
@@ -217,14 +227,95 @@ private class imageAdapter(imageList: ArrayList<post?>, requireContext: Context)
         Picasso.with(ctx).load(img_list.get(position)!!.photoUrl).into(holder.image)
         Picasso.with(ctx).load( Firebase.auth.currentUser.photoUrl).into(holder.pic)
         holder.name.text = Firebase.auth.currentUser.displayName
+
+        var check = false
+        img_list.get(position)!!.likePath.addValueEventListener(object :ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(shot in snapshot.children){
+                    if ( Firebase.auth.currentUser!!.uid==shot.value.toString()){
+                        check = true
+                        holder.likeButton.setBackgroundColor(ContextCompat.getColor(ctx , R.color.red))
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
+        holder.likeButton.setOnClickListener(object :View.OnClickListener{
+            override fun onClick(v: View?) {
+                if (!check){
+                    check = true
+                    img_list.get(position)!!.likePath.child(Firebase.auth.currentUser.uid).setValue(Firebase.auth.currentUser.uid)
+                    holder.likeButton.setBackgroundColor(ContextCompat.getColor(ctx , R.color.red))
+                }else{
+                    check = false
+                    img_list.get(position)!!.likePath.child(Firebase.auth.currentUser.uid).removeValue()
+                    holder.likeButton.setBackgroundColor(ContextCompat.getColor(ctx, R.color.fui_transparent))
+                }
+            }
+        })
+        holder.commentButton.setOnClickListener(object :View.OnClickListener{
+            override fun onClick(v: View?) {
+                val intent = Intent(ctx ,comment::class.java)
+
+                ctx.startActivity(intent.apply {
+                    putExtra("path",img_list.get(position)!!.commentPath.ref.toString())
+
+                })
+
+            }
+        })
+
     }
 
     fun blogPost(position: Int, holder: blogViewHolder){
         holder.name.text = Firebase.auth.currentUser.displayName
         holder.blog.text = img_list.get(position)!!.blog
         Picasso.with(ctx).load( Firebase.auth.currentUser.photoUrl).into(holder.pic)
+        var check = false
+        img_list.get(position)!!.likePath.addValueEventListener(object :ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(shot in snapshot.children){
+                    if ( Firebase.auth.currentUser!!.uid==shot.value.toString()){
+                        check = true
+                        holder.likeButton.setBackgroundColor(ContextCompat.getColor(ctx , R.color.red))
+                    }
+                }
+            }
 
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
+        holder.likeButton.setOnClickListener(object :View.OnClickListener{
+            override fun onClick(v: View?) {
+                if (!check){
+                    check = true
+                    img_list.get(position)!!.likePath.child(Firebase.auth.currentUser.uid).setValue(Firebase.auth.currentUser.uid)
+                    holder.likeButton.setBackgroundColor(ContextCompat.getColor(ctx , R.color.red))
+                }else{
+                    check = false
+                    img_list.get(position)!!.likePath.child(Firebase.auth.currentUser.uid).removeValue()
+                    holder.likeButton.setBackgroundColor(ContextCompat.getColor(ctx, R.color.fui_transparent))
+                }
+            }
+        })
+        holder.commentButton.setOnClickListener(object :View.OnClickListener{
+            override fun onClick(v: View?) {
+                val intent = Intent(ctx ,comment::class.java)
+
+                ctx.startActivity(intent.apply {
+                    putExtra("path",img_list.get(position)!!.commentPath.ref.toString())
+
+                })
+
+            }
+        })
     }
 }
-data class post(val photoUrl:String? , val type:Int? , val blog:String? )
+data class post(val photoUrl:String? , val type:Int? , val blog:String? , val likePath:DatabaseReference , val commentPath:DatabaseReference )
 

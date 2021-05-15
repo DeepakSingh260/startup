@@ -28,4 +28,5 @@
     <string name="postfromgallery">Post from Gallery</string>
     <string name="writeablog">Write a Blog</string>
     <string name="directocamera">Redirect to Camera</string>
+    <string name="reply">Reply</string>
 </resources>

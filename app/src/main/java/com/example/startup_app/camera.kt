@@ -207,19 +207,16 @@ class camera : Fragment() {
                         val push = _db.child(user.uid+"/").push()
                         push.child("photoUrl").setValue(downloadUrl.toString())
                         push.child("TYPE").setValue(1)
+                        push.child("comments").setValue("Comment")
+                        push.child("likes").setValue("Like")
+                        push.child("id").setValue(Firebase.auth.currentUser.uid)
+                        val timeStamp = SimpleDateFormat("dd:MM:yyyy").format(Date())
+                        push.child("timeStamp").setValue(timeStamp)
 
                         Log.d(TAG , "list id "+listID)
                         for (i in listID){
-                            val push = FirebaseDatabase.getInstance().getReference("profiles").child(i+"/").child("posts/").push()
-                            push.child("id").setValue(user.uid).toString()
-                            push.child("name").setValue(user.displayName.toString())
-                            push.child("profileUrl").setValue(user.photoUrl.toString())
-                            push.child("postUrl").setValue(downloadUrl.toString())
-                            push.child("TYPE").setValue(1)
-                            push.child("likes").setValue("Like")
-                            push.child("comments").setValue("Comment")
-                            val timeStamp = SimpleDateFormat("dd:MM:yyyy").format(Date())
-                            push.child("timeStamp").setValue(timeStamp)
+                            val pushPhoto = FirebaseDatabase.getInstance().getReference("profiles").child(i+"/").child("posts/").push()
+                            pushPhoto.child("id").setValue(push.toString())
                         }
                     }
                 }

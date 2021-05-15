@@ -14,6 +14,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
 import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -74,27 +75,54 @@ class home : Fragment() {
         recycleView.layoutManager = LinearLayoutManager(requireContext())
         recycleView.adapter= Adapter
 
-        FirebaseDatabase.getInstance().getReference("profiles").child(Firebase.auth.currentUser.uid+"/").child("posts").addValueEventListener(
+        FirebaseDatabase.getInstance().getReference("profiles").child(Firebase.auth.currentUser.uid+"/").child("posts").addListenerForSingleValueEvent(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     postList.clear()
 
                     for(shot in snapshot.children) {
-                        Log.d(TAG ,"Post List"+ postList.toString())
+
                         val id = shot.child("id").value.toString()
-                        val name = shot.child("name").value.toString()
-                        val profileUrl = shot.child("profileUrl").value.toString()
-                        val postUrl = shot.child("postUrl")?.value.toString()
-                        val blog = shot.child("blog").value?.toString()
-                        val likePath = shot.child("likes").ref
-                        val commentPath = shot.child("comments").ref
-                        if( shot.child("TYPE").value.toString().isDigitsOnly()){
-                             type=shot.child("TYPE").value.toString().toInt()
-                        }
-                        postList.add(post_data(id, name, profileUrl, postUrl , type , blog , likePath ,commentPath))
+
+                        FirebaseDatabase.getInstance().getReferenceFromUrl(id).addListenerForSingleValueEvent(
+                            object : ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+
+                                    val uid = snapshot.child("id").value.toString()
+                                    Log.d(TAG , "ID" + snapshot.value)
+                                    val postUrl = snapshot.child("photoUrl")?.value.toString()
+                                    val blog = snapshot.child("blog").value?.toString()
+                                    val likePath = snapshot.child("likes").ref
+                                    val commentPath = snapshot.child("comments").ref
+                                    if( snapshot.child("TYPE").value.toString().isDigitsOnly() && snapshot.child("TYPE").value!=null) {
+                                        type=snapshot.child("TYPE").value.toString().toInt()
+                                    }
+                                    FirebaseDatabase.getInstance().getReference("profiles").child(uid+"/").addListenerForSingleValueEvent(
+                                        object : ValueEventListener {
+                                            override fun onDataChange(snapshot: DataSnapshot) {
+
+                                                val name = snapshot.child("name").value.toString()
+                                                val profileUrl = snapshot.child("profileUrl").value.toString()
+                                                postList.add(post_data(id, name, profileUrl, postUrl , type , blog , likePath ,commentPath))
+
+                                                Adapter.notifyDataSetChanged()
+                                            }
+
+                                            override fun onCancelled(error: DatabaseError) {
+
+                                            }
+                                        })
+
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+
+                                }
+                            })
+
                     }
 
-                    Log.d(TAG , "PostList" + postList)
+
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -168,25 +196,15 @@ class PostData(requireContext: Context, postList: ArrayList<post_data>) : Recycl
         val profilePhoto:ImageView
         val post:ImageView
         val likeButton : ImageButton
+        val commentButton:ImageButton
         init {
             name = view.findViewById(R.id.display_name)
             profilePhoto = view.findViewById(R.id.profile_image_post)
             post = view.findViewById(R.id.post)
             likeButton = itemView.findViewById(R.id.likeButton)
+            commentButton = itemView.findViewById(R.id.commentButton)
             var check = false
-            likeButton.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(v: View?) {
 
-                    if (!check){
-                        likeButton.setBackgroundColor(ContextCompat.getColor(view.context , R.color.red))
-                        check=true
-                    }else{
-                        likeButton.setBackgroundColor(ContextCompat.getColor(view.context , R.color.fui_transparent))
-                        check=false
-                    }
-
-                }
-            })
         }
     }
     class BlogPostHolder(view: View) : RecyclerView.ViewHolder(view){
@@ -253,8 +271,20 @@ class PostData(requireContext: Context, postList: ArrayList<post_data>) : Recycl
                  }
              }
          })
+         holder.commentButton.setOnClickListener(object :View.OnClickListener{
+             override fun onClick(v: View?) {
+                 val intent = Intent(ctx ,comment::class.java)
+
+                 ctx.startActivity(intent.apply {
+                     putExtra("path",postList.get(position).commentPath.ref.toString())
+
+                 })
+
+             }
+         })
     }
     fun BlogPost(holder:BlogPostHolder , position: Int){
+        Log.d(TAG ,"Blog Post")
         holder.name.text =postList.get(position).name
         holder.blog.text = postList.get(position)!!.blog
         Picasso.with(ctx).load( postList.get(position).profileUrl).into(holder.pic)
@@ -290,8 +320,10 @@ class PostData(requireContext: Context, postList: ArrayList<post_data>) : Recycl
 
         holder.commentButton.setOnClickListener(object :View.OnClickListener{
             override fun onClick(v: View?) {
-                ctx.startActivity(Intent(ctx ,comment::class.java ).apply {
-                    putExtra("path",postList.get(position).commentPath.toString())
+                val intent = Intent(ctx ,comment::class.java)
+
+                        ctx.startActivity(intent.apply {
+                    putExtra("path",postList.get(position).commentPath.ref.toString())
 
                 })
 
@@ -306,18 +338,21 @@ class PostData(requireContext: Context, postList: ArrayList<post_data>) : Recycl
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (postList.get(position)!!.TYPE == 1){
+        if (postList.get(position)!!.blog == null){
             return 1
         }
-        if((postList.get(position)!!.TYPE == 2)){
+        if((postList.get(position)!!.postUrl == null)){
+            Log.d(TAG ,"blog post")
             return 2
         }
         else{
-            return super.getItemViewType(position)
+            Log.d(TAG , "default")
+            return 2
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        Log.d(TAG, "Post List " + postList)
         when(holder.itemViewType){
             1-> ImagePost(holder as PostViewHolder, position)
             2->BlogPost(holder as BlogPostHolder, position)

@@ -11,16 +11,46 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/commentName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+
+            android:id="@+id/comment_pic"
+            android:layout_width="59dp"
+            android:layout_height="34dp"
+
+            android:clickable="true"
+            android:elevation="5dp"
+            android:padding="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/profile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/commentName"
+            android:layout_width="340dp"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/comment_pic"
+            android:gravity="center_horizontal"
+            android:text="@string/name"
+            android:textAlignment="center" />
     <TextView
         android:id="@+id/commentPosted"
         android:layout_width="311dp"
-        android:layout_height="80dp"
+        android:textAlignment="center"
+        android:layout_toRightOf="@+id/comment_pic"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/commentName"
-        android:text="TextView" />
+        android:text="TextView"
+        android:gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/Reply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reply"
+            android:layout_toRightOf="@+id/comment_pic"
+            android:layout_below="@+id/commentPosted"/>
 
     </RelativeLayout>
 
