@@ -84,7 +84,7 @@ class home : Fragment() {
 
                         val id = shot.child("id").value.toString()
 
-                        FirebaseDatabase.getInstance().getReferenceFromUrl(id).addListenerForSingleValueEvent(
+                            FirebaseDatabase.getInstance().getReferenceFromUrl(id).addListenerForSingleValueEvent(
                             object : ValueEventListener {
                                 override fun onDataChange(snapshot: DataSnapshot) {
 

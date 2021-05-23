@@ -30,6 +30,8 @@ class uploadGallery : AppCompatActivity() {
     private lateinit var downloadUrl:Uri
     private lateinit var listID:MutableList<String>
     private val user = Firebase.auth.currentUser
+    private  val _db = FirebaseDatabase.getInstance().getReference("posts/")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,15 +74,17 @@ class uploadGallery : AppCompatActivity() {
                 })?.addOnCompleteListener() {
                     if (it.isSuccessful){
                         downloadUrl = it.result!!
+                        val push = _db.child(user.uid+"/").push()
+                        push.child("photoUrl").setValue(downloadUrl.toString())
+                        push.child("TYPE").setValue(1)
+                        push.child("comments").setValue("Comment")
+                        push.child("likes").setValue("Like")
+                        push.child("id").setValue(Firebase.auth.currentUser.uid)
+                        val timeStamp = SimpleDateFormat("dd:MM:yyyy").format(Date())
+                        push.child("timeStamp").setValue(timeStamp)
                         for (i in listID){
-                            val push = FirebaseDatabase.getInstance().getReference("profiles").child(i+"/").child("posts/").child(user.uid+"/").push()
-                            push.child("id").setValue(user.uid).toString()
-                            push.child("name").setValue(user.displayName.toString())
-                            push.child("profileUrl").setValue(user.photoUrl.toString())
-                            push.child("postUrl").setValue(downloadUrl.toString())
-                            push.child("TYPE").setValue(1)
-                            val timeStamp = SimpleDateFormat("dd:MM:yyyy").format(Date())
-                            push.child("timeStamp").setValue(timeStamp)
+                            val pushBlog = FirebaseDatabase.getInstance().getReference("profiles").child(i+"/").child("posts/").push()
+                            pushBlog.child("id").setValue(push.toString())
                         }
                     }
                 }
