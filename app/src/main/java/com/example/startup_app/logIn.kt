@@ -22,6 +22,9 @@ class logIn : AppCompatActivity() {
         setContentView(R.layout.activity_login_activity);
 
         auth = FirebaseAuth.getInstance()
+        if(auth.currentUser != null){
+            startActivity(Intent(this , MainActivity::class.java))
+        }
 
         registerButton = findViewById(R.id.registerbtn)
         btnLogin = findViewById(R.id.loginbtn)

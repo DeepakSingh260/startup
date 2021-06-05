@@ -50,10 +50,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val currentUser = auth.currentUser
-        if(currentUser == null){
-           startActivity(Intent(this , logIn::class.java))
-        }
+//        val currentUser  = FirebaseAuth.getInstance().currentUser
+//        if(currentUser == null){
+//           startActivity(Intent(this , logIn::class.java))
+//        }
     }
 
 
